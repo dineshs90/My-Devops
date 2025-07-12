@@ -1,0 +1,68 @@
+pipeline{
+    agent any
+    environment{
+        Docker_Image="dinesh790/golang-dockercompose"
+        ImageTag="build-${BUILD_NUMBER}"
+        Deployment_File="deployment.yaml"
+        Docker_Credentials='ssh-docker'
+        Github_Credentials='ssh-github'
+        remoteHost = "127.0.0.1"
+        remoteUser = "osboxes"
+        
+    }
+
+    stages{
+        stage('Git Clone'){
+            steps{
+                git url: 'git@github.com:dineshs90/devops.git', 
+                    branch: 'main',
+                    credentialsId: Github_Credentials
+            }
+        }
+
+        stage('Build Docker Image'){
+            steps{
+                script{
+                    dockerImage=docker.build("${Docker_Image}:${ImageTag}")
+                }
+            }
+        }
+
+        stage('Docker Login & Push Image'){
+            steps{
+                script{
+                    docker.withRegistry("https://index.docker.io/v1/",Docker_Credentials){
+                        dockerImage.push("${ImageTag}")
+                    }
+                }
+            }
+        }
+
+        stage('Remote Deploy via ssh & Run Container'){
+            steps{
+                script{
+                    
+                    //def imageName = "${Docker_Image}:${ImageTag}"
+
+                    sshagent(['ssh-remote']){
+                        sh "ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} \"hostname && uptime\""
+
+                         sh "ssh ${remoteUser}@${remoteHost} 'kubectl apply -f ${Deployment_File}'"
+                    }
+
+                }
+            }
+        }
+
+        stage('validate'){
+            steps{
+
+                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get deployment'"
+                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get pods'"
+                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get svc'"
+                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get nodes -o wide'"
+                //sh 'curl http://localhost:8085/health'
+            }
+        }
+    }
+}
