@@ -12,6 +12,7 @@ func main() {
 	router.GET("/home", func(c *gin.Context) {
 		c.String(http.StatusAccepted, "Welcome to Golang !!!")
 	})
+	//health check
 	router.GET("/health", func(c *gin.Context) {
 		c.String(http.StatusAccepted, "Application status: Healthy ✅")
 	})
