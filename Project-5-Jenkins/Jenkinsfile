@@ -55,6 +55,8 @@ pipeline{
 
                          sh "ssh ${remoteUser}@${remoteHost} 'kubectl apply -f ${Deployment_File}'"
 
+                        //Image change
+                         sh "ssh ${remoteUser}@${remoteHost} 'kubectl set image deployment/golang-deployment golang-pod=${Docker_Image}:${ImageTag}'"
                          //cleanup
                          sh "ssh ${remoteUser}@${remoteHost} 'rm -f ${Deployment_File}'"
                     }
