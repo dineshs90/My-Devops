@@ -8,13 +8,14 @@ pipeline{
         Github_Credentials='ssh-github'
         remoteHost = "127.0.0.1"
         remoteUser = "osboxes"
+        Github_Url="git@github.com:dineshs90/My-Devops.git"
         
     }
 
     stages{
         stage('Git Clone'){
             steps{
-                git url: 'git@github.com:dineshs90/devops.git', 
+                git url: Github_Url, 
                     branch: 'main',
                     credentialsId: Github_Credentials
             }
