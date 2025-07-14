@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: golang-pod
-          image: dinesh790/golang-dockercompose:{{Tag}} # image pulled from dockerhub
+          image: dinesh790/golang-dockercompose:{{TAG}} # image pulled from dockerhub
           imagePullPolicy: Always # To avoid cached image
           ports:
             - containerPort: 8080
