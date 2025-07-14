@@ -48,21 +48,32 @@ pipeline{
                     //def imageName = "${Docker_Image}:${ImageTag}"
 
                     sshagent(['ssh-remote-global']){
+
+                        sh """
+                          sed 's/{{TAG}}/${ImageTag}/g' Project-5-Jenkins/deployment.yaml >updated-deployment.yaml
+                        """
+
                         //Copy deployment.yaml to remote
-                        sh "scp -o StrictHostKeyChecking=no Project-5-Jenkins/deployment.yaml osboxes@127.0.0.1:/tmp/"
+                        sh "scp -o StrictHostKeyChecking=no updated-deployment.yaml ${remoteUser}@${remoteHost}:${Deployment_File}"
 
                         //Apply for remote
 
                          sh "ssh ${remoteUser}@${remoteHost} 'kubectl apply -f ${Deployment_File}'"
 
-                        //Image change
-                         sh "ssh ${remoteUser}@${remoteHost} 'kubectl set image deployment/golang-deployment golang-pod=${Docker_Image}:${ImageTag}'"
+                        //Image change after deployment
+                        // sh "ssh ${remoteUser}@${remoteHost} 'kubectl set image deployment/golang-deployment golang-pod=${Docker_Image}:${ImageTag}'"
+                         
                          //cleanup
                          sh "ssh ${remoteUser}@${remoteHost} 'rm -f ${Deployment_File}'"
                     }
 
                 }
             }
+            post {
+                always {
+                    sh "rm -f updated-deployment.yaml"
+                }
+            }            
         }
 
         stage('validate'){

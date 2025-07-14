@@ -4,6 +4,11 @@ metadata:
   name: golang-deployment
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0 # Ensure no pod downtime
+      maxSurge: 1 # Add 1 pod before deleting old one  
   selector:
     matchLabels:
       name: go-dep
@@ -14,9 +19,23 @@ spec:
     spec:
       containers:
         - name: golang-pod
-          image: dinesh790/golang-dockercompose:{{ImageTag}} # image pulled from dockerhub
+          image: dinesh790/golang-dockercompose:{{Tag}} # image pulled from dockerhub
+          imagePullPolicy: Always # To avoid cached image
           ports:
             - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10              
+
 
 ---
 apiVersion: v1
