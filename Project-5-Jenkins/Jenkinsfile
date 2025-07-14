@@ -4,8 +4,8 @@ pipeline{
         Docker_Image="dinesh790/golang-dockercompose"
         ImageTag="build-${BUILD_NUMBER}"
         Deployment_File="deployment.yaml"
-        Docker_Credentials='ssh-docker'
-        Github_Credentials='ssh-github'
+        Docker_Credentials='ssh-docker-global'
+        Github_Credentials='ssh-github-global'
         remoteHost = "127.0.0.1"
         remoteUser = "osboxes"
         Github_Url="git@github.com:dineshs90/My-Devops.git"
@@ -45,7 +45,7 @@ pipeline{
                     
                     //def imageName = "${Docker_Image}:${ImageTag}"
 
-                    sshagent(['ssh-remote']){
+                    sshagent(['ssh-remote-global']){
                         sh "ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} \"hostname && uptime\""
 
                          sh "ssh ${remoteUser}@${remoteHost} 'kubectl apply -f ${Deployment_File}'"
