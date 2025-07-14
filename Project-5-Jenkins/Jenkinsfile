@@ -11,6 +11,7 @@ pipeline{
         remoteHost = "127.0.0.1"
         remoteUser = "osboxes"
         Github_Url="git@github.com:dineshs90/My-Devops.git"
+        node_port="30080"
         
     }
 
@@ -82,8 +83,26 @@ pipeline{
                 sh "ssh ${remoteUser}@${remoteHost} 'kubectl get deployment'"
                 sh "ssh ${remoteUser}@${remoteHost} 'kubectl get pods'"
                 sh "ssh ${remoteUser}@${remoteHost} 'kubectl get svc'"
-                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get nodes -o wide'"
-                //sh 'curl http://localhost:8085/health'
+            }
+        }
+        stage('Test Endpoint'){
+            steps{
+                script{
+
+                    def internal_ip=sh(
+                        script: """
+                            ssh ${remoteUser}@${remoteHost} \\
+                            "kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type==\\\"InternalIP\\\")].address}'"
+                        """,
+                        returnStdout: true
+                    ).trim()
+
+                    def url = "http://${internal_ip}:${node_port}/health"
+
+                    echo "Health Check URL: ${url}"
+
+                    sh "curl --fail ${url} || echo 'Health check failed'"  
+                }
             }
         }
     }
