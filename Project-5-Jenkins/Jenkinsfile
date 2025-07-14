@@ -5,7 +5,7 @@ pipeline{
     environment{
         Docker_Image="dinesh790/golang-dockercompose"
         ImageTag="build-${BUILD_NUMBER}"
-        Deployment_File="deployment.yaml"
+        Deployment_File="Project-5-Jenkins/deployment.yaml"
         Docker_Credentials='ssh-docker-global'
         Github_Credentials='ssh-github-global'
         remoteHost = "127.0.0.1"
