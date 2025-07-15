@@ -12,6 +12,7 @@ pipeline{
         remoteUser = "osboxes"
         Github_Url="git@github.com:dineshs90/My-Devops.git"
         node_port="30080"
+        Namespace="monitoring"
         
     }
 
@@ -80,9 +81,9 @@ pipeline{
         stage('validate'){
             steps{
 
-                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get deployment'"
-                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get pods'"
-                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get svc'"
+                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get deployment -n ${Namespace}'"
+                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get pods -n ${Namespace}'"
+                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get svc -n ${Namespace}'"
             }
         }
         stage('Test Endpoint'){
@@ -92,7 +93,7 @@ pipeline{
                     def internal_ip=sh(
                         script: """
                             ssh ${remoteUser}@${remoteHost} \\
-                            "kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type==\\\"InternalIP\\\")].address}'"
+                            "kubectl get nodes -n ${Namespace} -o jsonpath='{.items[0].status.addresses[?(@.type==\\\"InternalIP\\\")].address}'"
                         """,
                         returnStdout: true
                     ).trim()

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
@@ -19,7 +20,8 @@ func main() {
 	router.GET("/status", func(c *gin.Context) {
 		c.String(http.StatusAccepted, "Everything is working fine !!!")
 	})
-
+	// 👉 Prometheus metrics endpoint
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	router.Run(":8080")
 
 }
