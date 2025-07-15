@@ -45,3 +45,5 @@ ssh-keygen -t rsa -b 4096 -C "jenkins@192.168.1.5"
 ~/.ssh/id_rsa
 
 
+# minikube 
+minikube service golang-service --url
