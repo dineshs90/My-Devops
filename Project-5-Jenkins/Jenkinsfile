@@ -127,8 +127,8 @@ pipeline{
                 sh "ssh ${remoteUser}@${remoteHost} 'kubectl get configmap -n ${Namespace}'"
                 sh "ssh ${remoteUser}@${remoteHost} 'kubectl describe configmap prometheus-server -n ${Namespace}'"
 
-                echo "Prometheus Dashboard URL: "http://${env.INTERNAL_IP}:${Prometheus_Port}"
-                echo "Grafana Dashboard URL: "http://${env.INTERNAL_IP}:${Grafana_Port}"
+                echo "Prometheus Dashboard URL: "http://${env.INTERNAL_IP}:${Prometheus_Port}""
+                echo "Grafana Dashboard URL: "http://${env.INTERNAL_IP}:${Grafana_Port}""
             }
         }
 
