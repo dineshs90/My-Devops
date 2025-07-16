@@ -63,8 +63,11 @@ pipeline{
 
                         //Apply for remote
 
-                         sh "ssh ${remoteUser}@${remoteHost} 'kubectl create namespace ${Namespace}'"
-                         sh "ssh ${remoteUser}@${remoteHost} 'kubectl get namespaces'"
+                         sh """
+                         ssh ${remoteUser}@${remoteHost} 
+                            'kubectl get namespaces ${Namespace} || kubectl create namespace ${Namespace}'
+                         """
+                         
                          sh "ssh ${remoteUser}@${remoteHost} 'kubectl apply -f ${Deployment_File}'"
 
                         //Image change after deployment
