@@ -1,8 +1,7 @@
 adminUser: admin
-
 admin:
   existingSecret: grafana-admin-secret
-  paswwordKey: admin-password
+  passwordKey: admin-password
 service:
   type: NodePort
   nodePort: 32001
