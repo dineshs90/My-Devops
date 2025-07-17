@@ -2,7 +2,8 @@ server:
   service:
     type: NodePort
     nodePort: 32000
-  additionalScrapeConfigs:
-    - job_name: "golang-app"
-      static_configs:
-        - target: ["golang-service:8080"]
+  extraScrapeConfigsSecret: prometheus-additional-scrape-configs  
+  # additionalScrapeConfigs:
+  #   - job_name: "golang-app"
+  #     static_configs:
+  #       - target: ["golang-service:8080"]
