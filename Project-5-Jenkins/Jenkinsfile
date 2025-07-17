@@ -15,6 +15,7 @@ pipeline{
         Node_Port="30080"
         Prometheus_Port="32000"
         Grafana_Port="32001"
+        KUBECONFIG="/home/osboxes/.kube/config"
 
         
     }
