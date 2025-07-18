@@ -109,36 +109,29 @@ pipeline{
 
         stage('Install Monitoring Tools') {
             steps {
+        sh """
+            # Copy values and scrape config files to remote VM
+            scp Project-5-Jenkins/full-scrape-config.yaml ${remoteUser}@${remoteHost}:/tmp/full-scrape-config.yaml
+            scp Project-5-Jenkins/prometheus-values.yaml ${remoteUser}@${remoteHost}:/tmp/prometheus-values.yaml
+            scp Project-5-Jenkins/grafana-values.yaml ${remoteUser}@${remoteHost}:/tmp/grafana-values.yaml
 
-                sh """
-                    # Copy files to remote VM
+            # SSH into remote and install/update Prometheus & Grafana using Helm
+            ssh ${remoteUser}@${remoteHost} '
+            helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+            helm repo add grafana https://grafana.github.io/helm-charts
+            helm repo update
 
-                    //scp Project-5-Jenkins/extra-scrape-configs.yaml ${remoteUser}@${remoteHost}:/tmp/extra-scrape-configs.yaml
-                    scp Project-5-Jenkins/full-scrape-config.yaml ${remoteUser}@${remoteHost}:/tmp/full-scrape-config.yaml
-                    scp Project-5-Jenkins/prometheus-values.yaml ${remoteUser}@${remoteHost}:/tmp/prometheus-values.yaml
-                    scp Project-5-Jenkins/grafana-values.yaml ${remoteUser}@${remoteHost}:/tmp/grafana-values.yaml
+            helm upgrade --install prometheus prometheus-community/prometheus \\
+              -n ${Namespace} \\
+              -f /tmp/prometheus-values.yaml \\
+              --set-file serverFiles.prometheus\\.yml\\.scrape_configs=/tmp/full-scrape-config.yaml
 
-                    # SSH and run kubectl + helm remotely
-                    ssh ${remoteUser}@${remoteHost} '
-                    kubectl get secret prometheus-extra-scrape-configs -n monitoring >/dev/null 2>&1 || \
-                    kubectl create secret generic prometheus-extra-scrape-configs \
-                    --from-file=extra-scrape-configs.yaml=/tmp/extra-scrape-configs.yaml \
-                    -n monitoring
-
-                    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-                    helm repo add grafana https://grafana.github.io/helm-charts
-                    helm repo update
-
-                    //helm upgrade --install prometheus prometheus-community/prometheus -n ${Namespace} -f /tmp/prometheus-values.yaml
-                    helm upgrade --install prometheus prometheus-community/prometheus \
-                    -n ${Namespace} \
-                    -f /tmp/prometheus-values.yaml \
-                    --set-file serverFiles.prometheus\.yml\.scrape_configs=/tmp/full-scrape-config.yaml
-
-                    helm upgrade --install grafana grafana/grafana -n ${Namespace} -f /tmp/grafana-values.yaml
-                    helm list -n monitoring
-                    '
-                    """
+            helm upgrade --install grafana grafana/grafana -n ${Namespace} -f /tmp/grafana-values.yaml
+            helm list -n monitoring
+            '
+        """
+                
+                    
             }
         }
         stage('validate'){
