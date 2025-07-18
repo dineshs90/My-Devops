@@ -2,3 +2,31 @@ server:
   service:
     type: NodePort
     nodePort: 32000
+
+  # DISABLE built-in discovery jobs
+  extraScrapeConfigs: []
+  defaultRules:
+    create: false
+
+  kubelet:
+    enabled: false
+  kubeApiServer:
+    enabled: false
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
+  kubeStateMetrics:
+    enabled: false
+  nodeExporter:
+    enabled: false
+  serviceMonitors:
+    enabled: false
+  podMonitors:
+    enabled: false
+  probes:
+    enabled: false
+  rules:
+    enabled: false
