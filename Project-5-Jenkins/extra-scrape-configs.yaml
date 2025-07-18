@@ -1,3 +1,4 @@
-- job_name: "golang-app"
+- job_name: golang-app
   static_configs:
-  - targets: ["golang-service:8080"]
+    - targets:
+        - golang-service:8080
