@@ -4,6 +4,7 @@ metadata:
   name: golang-deployment
   namespace: monitoring
 spec:
+  revisionHistoryLimit: 2  # Keep only last 2 revisions (replicaset history)
   replicas: 2
   strategy:
     type: RollingUpdate
