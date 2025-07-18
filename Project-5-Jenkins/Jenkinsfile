@@ -111,12 +111,12 @@ pipeline{
             steps {
 
                 sh """
-                    // Copy files to remote VM
+                    # Copy files to remote VM
                     scp Project-5-Jenkins/extra-scrape-configs.yaml ${remoteUser}@${remoteHost}:/tmp/extra-scrape-configs.yaml
                     scp Project-5-Jenkins/prometheus-values.yaml ${remoteUser}@${remoteHost}:/tmp/prometheus-values.yaml
                     scp Project-5-Jenkins/grafana-values.yaml ${remoteUser}@${remoteHost}:/tmp/grafana-values.yaml
 
-                    // SSH and run kubectl + helm remotely
+                    # SSH and run kubectl + helm remotely
                     ssh ${remoteUser}@${remoteHost} '
                     kubectl get secret prometheus-extra-scrape-configs -n monitoring >/dev/null 2>&1 || \
                     kubectl create secret generic prometheus-extra-scrape-configs \
