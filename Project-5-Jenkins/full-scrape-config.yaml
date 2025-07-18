@@ -1,0 +1,9 @@
+# Project-5-Jenkins/full-scrape-config.yaml
+
+- job_name: prometheus
+  static_configs:
+    - targets: ["localhost:9090"]
+
+- job_name: golang-app
+  static_configs:
+    - targets: ["golang-service:8080"]

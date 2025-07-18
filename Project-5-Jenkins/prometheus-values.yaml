@@ -1,11 +1,4 @@
 server:
   service:
-    nodePort: 32000
     type: NodePort
-
-  extraScrapeConfigsSecret:
-    enabled: true
-    name: prometheus-extra-scrape-configs
-
-  extraScrapeConfigs: |
-    # loaded from secret
+    nodePort: 32000
