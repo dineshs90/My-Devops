@@ -3,11 +3,14 @@ server:
     type: NodePort
     nodePort: 32000
 
-  # DISABLE built-in discovery jobs
+  # Disable ALL default discovery mechanisms
   extraScrapeConfigs: []
   defaultRules:
     create: false
+  extraVolumes: []
+  extraVolumeMounts: []
 
+  # This disables all built-in jobs
   kubelet:
     enabled: false
   kubeApiServer:
@@ -30,3 +33,17 @@ server:
     enabled: false
   rules:
     enabled: false
+
+  # Use your full config as the only config
+  serverFiles:
+    prometheus.yml:
+      global:
+        scrape_interval: 15s
+        evaluation_interval: 15s
+      scrape_configs:
+        - job_name: "prometheus"
+          static_configs:
+            - targets: ["localhost:9090"]
+        - job_name: "golang-app"
+          static_configs:
+            - targets: ["golang-service:8080"]
