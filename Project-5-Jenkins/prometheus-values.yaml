@@ -1,10 +1,4 @@
 server:
   service:
     type: NodePort
-    nodePort: 32000
-  # extraScrapeConfigs: |
-  #   - job_name: "golang-app"
-  #     static_configs:
-  #       - targets: ["golang-service:8080"]
-  extraScrapeConfigsSecret:
-    enabled: true        
+    nodePort: 32000      
