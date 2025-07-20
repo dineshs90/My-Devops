@@ -1,3 +1,5 @@
+## Project Flow
+
 ![CI/CD Flow](images/cicd-flow.png)
 
 ## Step 1: Configure Credentials in Jenkins
@@ -19,7 +21,7 @@
 ## Step 4: Deployment
 
 - Deploy to remote VM using `deployment.yaml` file
-- Run containers inside Kubernetes pods
+- Run containers inside Kubernetes Cluster
 
 ## Step 5: Testing
 
@@ -38,7 +40,7 @@
     kubectl edit configmap prometheus-server -n <namespace>
 
 - Scrape Configs: 
-   
+
      ```bash
     scrape_configs:
         - job_name: "golang-app"
