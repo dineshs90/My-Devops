@@ -43,7 +43,7 @@
 
      ```bash
     scrape_configs:
-        - job_name: "golang-app"
+        - job_name: golang-app
         static_configs:
             - targets:
             - golang-service:8080       
@@ -68,10 +68,10 @@
 - Access Prometheus and Grafana UIs locally via port forwarding:
     
     ```bash
-    kubectl port-forward svc/prometheus 9090:80 -n <namespace>
+    kubectl port-forward svc/prometheus-server 9090:80 -n <namespace>
     kubectl port-forward svc/grafana 3000:80 -n <namespace>
 
-## Step 7: Validate the Setup
+## Step 7: Validate Kubernetes Setup
 
 - Check all Kubernetes resources: 
     
@@ -88,3 +88,30 @@
 - Validate Grafana: 
     ```bash
     "http://localhost:3000"
+    
+## Step 8: Validate Grafana Setup
+
+1. Access Grafana UI:  
+   Open in your browser: [http://localhost:3000](http://localhost:3000)
+
+2. Add Prometheus as a Data Source:
+   - Go to **Settings → Data Sources**
+   - Click **Add data source**
+   - Select **Prometheus**
+   - Set the URL to:  
+     `http://prometheus-server.monitoring.svc.cluster.local`
+   - Click **Save & Test**
+
+3. Import a Sample Dashboard:
+   - Go to **Dashboards → Import**
+   - Enter Dashboard ID: `6417`
+   - Click **Load** → Select Prometheus → Import
+
+4. Create a Custom Dashboard (Optional):
+   - Go to **Dashboards → New**
+   - Add a panel
+   - Run Prometheus queries as per requirement
+   - Save the dashboard
+
+
+
