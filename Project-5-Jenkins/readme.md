@@ -34,37 +34,51 @@
   
 - Edit Prometheus `ConfigMap` to scrape your Golang app metrics:
 
-    ```yaml
+     ```bash
     scrape_configs:
         - job_name: "golang-app"
         static_configs:
             - targets:
-            - golang-service:8080
-    ```        
+            - golang-service:8080       
+     ```bash
     kubectl edit configmap prometheus-server -n <namespace>
 
 - Create a Grafana admin credentials secret:
-
+    
+    ```bash
     kubectl create secret generic grafana-admin-secret \
     --from-literal=admin-user='admin' \
     --from-literal=admin-password='MyStrongP@ssw0rd' \
     -n <namespace>
 
 - Create grafana-values.yaml with the following config:
-
+    
+    ```bash
     admin:
         existingSecret: grafana-admin-secret
         userKey: admin-user
         passwordKey: admin-password
 
 - Access Prometheus and Grafana UIs locally via port forwarding:
-
+    
+    ```bash
     kubectl port-forward svc/prometheus 9090:80 -n <namespace>
     kubectl port-forward svc/grafana 3000:80 -n <namespace>
 
 ## Step 7: Validate the Setup
 
-- Check all Kubernetes resources: kubectl get all -n <namespace>
-- Validate your app's health endpoint: curl "http://${INTERNAL_IP}:${NODE_PORT}/health"
-- Validate Prometheus : "http://localhost:9090/targets"
-- Validate Grafana: "http://localhost:3000"
+- Check all Kubernetes resources: 
+    
+    ```bash 
+    kubectl get all -n <namespace>
+
+- Validate your app's health endpoint: 
+    ```bash
+    curl "http://${INTERNAL_IP}:${NODE_PORT}/health"
+- Validate Prometheus : 
+    ```bash
+    "http://localhost:9090/targets"
+
+- Validate Grafana: 
+    ```bash
+    "http://localhost:3000"
