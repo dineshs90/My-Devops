@@ -32,16 +32,20 @@
 
 - Install **Prometheus** and **Grafana** using Helm charts.
   
-- Edit Prometheus `ConfigMap` to scrape your Golang app metrics:
+- Edit Prometheus `ConfigMap` to scrape/add your Golang app metrics:
 
+    ```bash
+    kubectl edit configmap prometheus-server -n <namespace>
+
+- Scrape Configs: 
+   
      ```bash
     scrape_configs:
         - job_name: "golang-app"
         static_configs:
             - targets:
             - golang-service:8080       
-     ```bash
-    kubectl edit configmap prometheus-server -n <namespace>
+
 
 - Create a Grafana admin credentials secret:
     
