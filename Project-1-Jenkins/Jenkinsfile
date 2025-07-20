@@ -57,7 +57,7 @@ pipeline{
                     sshagent(['ssh-remote-global']){
 
                         sh """
-                          sed 's/{{TAG}}/${ImageTag}/g' ${PATH}/deployment.yaml >updated-deployment.yaml
+                          sed 's/{{TAG}}/${ImageTag}/g' ${APP_PATH}/deployment.yaml >updated-deployment.yaml
                         """
 
                         //Copy deployment.yaml to remote
