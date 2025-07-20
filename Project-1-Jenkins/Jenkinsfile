@@ -33,7 +33,7 @@ pipeline{
         stage('Build Docker Image'){
             steps{
                 script{
-                    dockerImage=docker.build("${Docker_Image}:${ImageTag}",${PATH})
+                    dockerImage=docker.build("${Docker_Image}:${ImageTag}",PATH)
                 }
             }
         }
@@ -128,7 +128,7 @@ pipeline{
         stage('validate'){
             steps{
 
-                sh "ssh ${remoteUser}:@${remoteHost} 'kubectl get all -n ${Namespace}'"
+                sh "ssh ${remoteUser}@${remoteHost} 'kubectl get all -n ${Namespace}'"
 
                 // Not Required    
                 // sh "ssh ${remoteUser}@${remoteHost} 'kubectl get deployment -n ${Namespace}'"
