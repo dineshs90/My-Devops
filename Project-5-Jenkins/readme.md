@@ -1,49 +1,70 @@
-# To Run go app:
+![CI/CD Flow](images/cicd-flow.png)
 
-go run main.go
+## Step 1: Configure Credentials in Jenkins
 
-go build .
+- Configure SSH credentials globally for DockerLogin. 
+- Configure SSH credentials globally for Jenkins to Monitor Github.
+- Configure SSH credentials globally for Remote VM.
+- Configure environment variables in `Jenkinsfile`
 
-# created executable file name based on go.mod file 
-./simple-app
+## Step 2: Clone Source Code
 
-# Build Image based on dockerfile
+- Clone source code into Jenkins workspace
 
-docker build -t my-app .
+## Step 3: Build
 
-# Push Docker Image to docker hub
+- Build Docker image using `Dockerfile`
+- Tag and push Docker image to Docker Hub
 
-docker login
-docker tag golang-dockercompose:latest dinesh790/golang-dockercompose:latest
-docker push dinesh790/golang-dockercompose:latest
+## Step 4: Deployment
 
+- Deploy to remote VM using `deployment.yaml` file
+- Run containers inside Kubernetes pods
 
-# To run the docker image using kubernetes
+## Step 5: Testing
 
-kubectl apply -f deployment.yaml 
+- Perform health check using Node IP:
 
-# Jenkins
+  ```bash
+  curl "http://${env.INTERNAL_IP}:${Node_Port}/health"
 
-sudo systemctl stop jenkins
-sudo systemctl start jenkins
-sudo systemctl status jenkins
-sudo systemctl restart jenkins
+## Step 6: Monitoring Setup (Prometheus + Grafana)
 
-# Credentials 
+- Install **Prometheus** and **Grafana** using Helm charts.
+  
+- Edit Prometheus `ConfigMap` to scrape your Golang app metrics:
 
-# Remote Host:
-ssh-keygen -t rsa -b 4096 -C "jenkins@192.168.1.5"
-ssh-copy-id osboxes@<IP>
-ssh osboxes@<IP>
+    ```yaml
+    scrape_configs:
+        - job_name: "golang-app"
+        static_configs:
+            - targets:
+            - golang-service:8080
+    ```        
+    kubectl edit configmap prometheus-server -n <namespace>
 
-# Docker:
-username:
-password
+- Create a Grafana admin credentials secret:
 
-# Github:
-ssh-keygen -t rsa -b 4096 -C "jenkins@192.168.1.5"
-~/.ssh/id_rsa
+    kubectl create secret generic grafana-admin-secret \
+    --from-literal=admin-user='admin' \
+    --from-literal=admin-password='MyStrongP@ssw0rd' \
+    -n <namespace>
 
+- Create grafana-values.yaml with the following config:
 
-# minikube 
-minikube service golang-service --url
+    admin:
+        existingSecret: grafana-admin-secret
+        userKey: admin-user
+        passwordKey: admin-password
+
+- Access Prometheus and Grafana UIs locally via port forwarding:
+
+    kubectl port-forward svc/prometheus 9090:80 -n <namespace>
+    kubectl port-forward svc/grafana 3000:80 -n <namespace>
+
+## Step 7: Validate the Setup
+
+- Check all Kubernetes resources: kubectl get all -n <namespace>
+- Validate your app's health endpoint: curl "http://${INTERNAL_IP}:${NODE_PORT}/health"
+- Validate Prometheus : "http://localhost:9090/targets"
+- Validate Grafana: "http://localhost:3000"
